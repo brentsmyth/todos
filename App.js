@@ -72,10 +72,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Appbar.Header style={styles.header}>
+        <Appbar.Header>
           <Appbar.Content title="Todos" />
         </Appbar.Header>
-        <ScrollView style={styles.listContainer}>
+        <ScrollView>
           {list.map((item) => (
             <Checkbox.Item
               key={item.uuid}
@@ -96,7 +96,7 @@ export default function App() {
             onChangeText={(text) => setInputValue(text)}
             style={styles.input}
           />
-          <Button mode="contained" onPress={handleAddItem} style={styles.button}>
+          <Button mode="contained" onPress={handleAddItem}>
             Add
           </Button>
         </KeyboardAvoidingView>
@@ -109,30 +109,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    elevation: 0,
-  },
-  listContainer: {
-    flex: 1,
-  },
-  item: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  completedItem: {
-    opacity: 0.5,
-  },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     padding: 10,
   },
   input: {
     flex: 1,
     marginRight: 10,
-  },
-  button: {
-    marginLeft: 10,
   },
 });
