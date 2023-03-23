@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { Platform, KeyboardAvoidingView, StyleSheet, View, ScrollView } from 'react-native';
+import { Appbar, TextInput, Button, List, Checkbox } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const sortByCompleted = (list) => {
   const incompleteItems = list.filter((item) => !item.complete);
@@ -69,88 +70,69 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text>Todos</Text>
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <Appbar.Header style={styles.header}>
+          <Appbar.Content title="Todos" />
+        </Appbar.Header>
+        <ScrollView style={styles.listContainer}>
+          {list.map((item) => (
+            <Checkbox.Item
+              key={item.uuid}
+              label={item.description}
+              status={item.complete ? 'checked' : 'unchecked'}
+              onPress={() => handleCompleteItem(item.uuid)}
+            />
+          ))}
+        </ScrollView>
+        <KeyboardAvoidingView
+         style={styles.footer}
+         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        >
+          <TextInput
+            label="Add item"
+            value={inputValue}
+            onChangeText={(text) => setInputValue(text)}
+            style={styles.input}
+          />
+          <Button mode="contained" onPress={handleAddItem} style={styles.button}>
+            Add
+          </Button>
+        </KeyboardAvoidingView>
       </View>
-      <ScrollView style={styles.listContainer}>
-        {list.map((item) => (
-          <TouchableWithoutFeedback key={item.uuid} onLongPress={() => handleCompleteItem(item.uuid)}>
-            <View style={[styles.item, item.complete && styles.completedItem]}>
-              <Text>{item.description}</Text>
-              <Text>{item.complete ? 'Complete' : 'Incomplete'}</Text>
-            </View>
-          </TouchableWithoutFeedback>
-        ))}
-      </ScrollView>
-      <View style={styles.footer}>
-        <TextInput
-          style={styles.input}
-          value={inputValue}
-          onChangeText={(text) => setInputValue(text)}
-          placeholder="Add item"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleAddItem}>
-          <Text>Add</Text>
-        </TouchableOpacity>
-      </View>
-      <StatusBar style="auto" />
-    </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 50,
   },
   header: {
-    alignItems: 'center',
-    padding: 10,
-    width: '100%',
+    elevation: 0,
   },
   listContainer: {
     flex: 1,
-    width: '100%',
   },
   item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
   completedItem: {
-    backgroundColor: '#eee',
     opacity: 0.5,
   },
   footer: {
-    backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
     padding: 10,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 10,
-    width: '80%',
+    flex: 1,
+    marginRight: 10,
   },
   button: {
-    backgroundColor: '#007AFF',
-    padding: 10,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginLeft: 10,
-    alignSelf: 'flex-end',
   },
 });
