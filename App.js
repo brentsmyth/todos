@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Platform, KeyboardAvoidingView, StyleSheet, View, ScrollView } from 'react-native';
-import { Appbar, TextInput, Button, List, Checkbox } from 'react-native-paper';
+import { Appbar, TextInput, Button, Checkbox } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
