@@ -30,8 +30,8 @@ const sortByCompleted = (list) => {
 const DEFAULT_LIST_NAME = 'todos';
 
 export default function App() {
-  const [listNames, setListNames] = useState([DEFAULT_LIST_NAME]);
-  const [listName, setListName] = useState(DEFAULT_LIST_NAME);
+  const [listNames, setListNames] = useState([]);
+  const [listName, setListName] = useState('');
   const [list, setList] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
@@ -41,28 +41,22 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await AsyncStorage.getItem(listName);
-        if (data !== null) {
-          setList(sortByCompleted(JSON.parse(data)));
+        let listNames;
+        const listNamesData = await AsyncStorage.getItem('listNames');
+        if (listNamesData !== null) {
+          listNames = JSON.parse(listNamesData);
+        } else {
+          listNames = [DEFAULT_LIST_NAME];
+        }
+
+        setListNames(listNames);
+        setListName(listNames[0]);
+
+        const listData = await AsyncStorage.getItem(listNames[0]);
+        if (listData !== null) {
+          setList(sortByCompleted(JSON.parse(listData)));
         } else {
           setList([]);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchData();
-  }, [listName]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await AsyncStorage.getItem('listNames');
-        if (data !== null) {
-          setListNames(JSON.parse(data));
-        } else {
-          setListNames([DEFAULT_LIST_NAME]);
         }
       } catch (e) {
         console.error(e);
