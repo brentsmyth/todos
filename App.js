@@ -27,32 +27,37 @@ const sortByCompleted = (list) => {
   return [...incompleteItems, ...completeItems];
 };
 
-const DEFAULT_LIST_NAME = 'todos';
+const DEFAULT_LIST_NAME = 'Todos';
 
 export default function App() {
-  const [listNames, setListNames] = useState([]);
-  const [listName, setListName] = useState('');
+  const [lists, setLists] = useState([]);
+  const [listUuid, setListUuid] = useState('');
   const [list, setList] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [newListName, setNewListName] = useState('');
 
+  const currentList = lists.find(list => list.uuid === listUuid);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let listNames;
-        const listNamesData = await AsyncStorage.getItem('listNames');
-        if (listNamesData !== null) {
-          listNames = JSON.parse(listNamesData);
+        let lists;
+        const listsData = await AsyncStorage.getItem('lists');
+        if (listsData !== null) {
+          lists = JSON.parse(listsData);
         } else {
-          listNames = [DEFAULT_LIST_NAME];
+          lists = [{
+            name: DEFAULT_LIST_NAME,
+            uuid: uuid.v4(),
+          }];
         }
 
-        setListNames(listNames);
-        setListName(listNames[0]);
+        setLists(lists);
+        setListUuid(lists[0].uuid);
 
-        const listData = await AsyncStorage.getItem(listNames[0]);
+        const listData = await AsyncStorage.getItem(lists[0].uuid);
         if (listData !== null) {
           setList(sortByCompleted(JSON.parse(listData)));
         } else {
@@ -79,7 +84,7 @@ export default function App() {
     setList(newList);
 
     try {
-      await AsyncStorage.setItem(listName, JSON.stringify(newList));
+      await AsyncStorage.setItem(listUuid, JSON.stringify(newList));
     } catch (e) {
       console.error(e);
     }
@@ -97,17 +102,17 @@ export default function App() {
     setList(sortByCompleted(newList));
 
     try {
-      await AsyncStorage.setItem(listName, JSON.stringify(newList));
+      await AsyncStorage.setItem(listUuid, JSON.stringify(newList));
     } catch (e) {
       console.error(e);
     }
   };
 
-  const handleListChange = async (name) => {
-    setListName(name);
+  const handleListChange = async (uuid) => {
+    setListUuid(uuid);
 
     try {
-      const data = await AsyncStorage.getItem(name);
+      const data = await AsyncStorage.getItem(uuid);
       if (data !== null) {
         setList(sortByCompleted(JSON.parse(data)));
       } else {
@@ -128,15 +133,18 @@ export default function App() {
   const handleCreateList = async () => {
     if (newListName.trim() === '') return;
 
-    const newName = newListName.trim().toLowerCase().replace(/\s+/g, '-');
-    const newNames = [...listNames, newName];
-    setListNames(newNames);
+    const newList = {
+      name: newListName.trim(),
+      uuid: uuid.v4(),
+    };
+    const newLists = [...lists, newList];
+    setLists(newLists);
     setDialogVisible(false);
 
     try {
-      await AsyncStorage.setItem('listNames', JSON.stringify(newNames));
-      await AsyncStorage.setItem(newName, '[]');
-      setListName(newName);
+      await AsyncStorage.setItem('lists', JSON.stringify(newLists));
+      await AsyncStorage.setItem(newList.uuid, '[]');
+      setListUuid(newList.uuid);
       setList([]);
     } catch (e) {
       console.error(e);
@@ -148,7 +156,7 @@ export default function App() {
       <SafeAreaProvider>
         <View style={styles.container}>
           <Appbar.Header>
-            <Appbar.Content title={listName} />
+            <Appbar.Content title={currentList?.name} />
             <Menu
               visible={menuVisible}
               onDismiss={() => setMenuVisible(false)}
@@ -159,11 +167,11 @@ export default function App() {
                 />
               }
             >
-              {listNames.map((name) => (
+              {lists.map((list) => (
                 <Menu.Item
-                  key={name}
-                  title={name}
-                  onPress={() => handleListChange(name)}
+                  key={list.name}
+                  title={list.name}
+                  onPress={() => handleListChange(list.uuid)}
                 />
               ))}
               <Divider />
