@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Platform,
   KeyboardAvoidingView,
@@ -38,30 +38,30 @@ export default function App() {
 
   const currentList = lists.find(list => list.uuid === listUuid);
 
-  const handleAddItem = () => {
+  const handleAddItem = useCallback(() => {
     addItem(inputValue);
     setInputValue('');
-  };
+  }, [addItem, inputValue]);
 
-  const handleCompleteItem = (uuid) => {
+  const handleCompleteItem = useCallback((uuid) => {
     completeItem(uuid);
-  };
+  }, [completeItem]);
 
-  const handleListChange = (uuid) => {
+  const handleListChange = useCallback((uuid) => {
     changeList(uuid);
     setMenuVisible(false);
-  };
+  }, [changeList]);
 
-  const handleAddList = () => {
+  const handleAddList = useCallback(() => {
     setMenuVisible(false);
     setDialogVisible(true);
-  };
+  }, []);
 
-  const handleCreateList = () => {
+  const handleCreateList = useCallback(() => {
     addList(newListName);
     setDialogVisible(false);
     setNewListName('');
-  };
+  }, [addList, newListName]);
 
   return (
     <PaperProvider>
