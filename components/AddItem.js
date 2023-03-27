@@ -5,8 +5,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { useTodoContext } from '../contexts/TodoContext';
 
-const AddItem = ({ addItem }) => {
+const AddItem = () => {
+  const { addItem } = useTodoContext();
   const [inputValue, setInputValue] = useState('');
 
   const handleAddItem = useCallback(() => {

@@ -1,7 +1,9 @@
 import { ScrollView } from 'react-native';
 import { Checkbox } from 'react-native-paper';
+import { useTodoContext } from '../contexts/TodoContext';
 
-const TodoList = ({ list, handleCompleteItem }) => {
+const TodoList = () => {
+  const { list, handleCompleteItem } = useTodoContext();
   return (
     <ScrollView>
       {list.map((item) => (

@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
 import { Appbar, Menu, Divider } from 'react-native-paper';
 import CreateListDialog from './CreateListDialog';
+import { useTodoContext } from '../contexts/TodoContext';
 
-const Header = ({ listUuid, lists, changeList, addList }) => {
+const Header = () => {
+  const { listUuid, lists, changeList, addList } = useTodoContext();
   const [menuVisible, setMenuVisible] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
   const currentList = lists.find((list) => list.uuid === listUuid);
