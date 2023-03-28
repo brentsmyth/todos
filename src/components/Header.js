@@ -42,7 +42,7 @@ const Header = () => {
       >
         {lists.map((list) => (
           <Menu.Item
-            key={list.name}
+            key={list.uuid}
             title={list.name}
             onPress={() => handleListChange(list.uuid)}
           />
