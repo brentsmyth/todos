@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { Keyboard } from 'react-native';
 import { Appbar, Menu, Divider } from 'react-native-paper';
 import CreateListDialog from './CreateListDialog';
 import { useTodoContext } from '../contexts/TodoContext';
@@ -8,6 +9,11 @@ const Header = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
   const currentList = lists.find((list) => list.uuid === listUuid);
+
+  const handleMenuOpen = useCallback(() => {
+    setMenuVisible(true);
+    Keyboard.dismiss();
+  }, []);
 
   const handleListChange = useCallback(
     (uuid) => {
@@ -36,7 +42,7 @@ const Header = () => {
         anchor={
           <Appbar.Action
             icon="dots-vertical"
-            onPress={() => setMenuVisible(true)}
+            onPress={handleMenuOpen}
           />
         }
       >
