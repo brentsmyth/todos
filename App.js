@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, StatusBar } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TodoProvider } from './src/contexts/TodoContext';
@@ -12,6 +12,7 @@ export default function App() {
       <SafeAreaProvider>
         <TodoProvider>
           <View style={styles.container}>
+            <StatusBar barStyle="dark-content" />
             <Header />
             <TodoList />
             <AddItem />
