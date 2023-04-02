@@ -2,11 +2,19 @@ import { ScrollView } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
 
+const sortByCompleted = (list) => {
+  const incompleteItems = list.filter((item) => !item.complete);
+  const completeItems = list.filter((item) => item.complete);
+  return [...incompleteItems, ...completeItems];
+};
+
 const TodoList = () => {
   const { list, completeItem } = useTodoContext();
+  const sortedList = sortByCompleted(list);
+
   return (
     <ScrollView>
-      {list.map((item) => (
+      {sortedList.map((item) => (
         <Checkbox.Item
           key={item.uuid}
           label={item.description}
