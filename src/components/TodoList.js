@@ -1,16 +1,16 @@
+import { useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
 
-const sortByCompleted = (list) => {
-  const incompleteItems = list.filter((item) => !item.complete);
-  const completeItems = list.filter((item) => item.complete);
-  return [...incompleteItems, ...completeItems];
-};
-
 const TodoList = () => {
   const { list, completeItem } = useTodoContext();
-  const sortedList = sortByCompleted(list);
+
+  const sortedList = useMemo(() => {
+    const incompleteItems = list.filter((item) => !item.complete);
+    const completeItems = list.filter((item) => item.complete);
+    return [...incompleteItems, ...completeItems];
+  }, [list]);
 
   return (
     <ScrollView>
