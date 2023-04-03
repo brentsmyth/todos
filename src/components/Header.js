@@ -15,8 +15,8 @@ const Header = () => {
   }, []);
 
   const handleListChange = useCallback(
-    (uuid) => {
-      changeList(uuid);
+    (list) => {
+      changeList(list);
       setMenuVisible(false);
     },
     [changeList]
