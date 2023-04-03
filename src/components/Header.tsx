@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
 import { Appbar, Menu, Divider, TextInput, Portal, Button } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
+import { List } from '../shared/types';
 
 const Header = () => {
   const { lists, currentList, changeList, addList } = useTodoContext();
@@ -15,7 +16,7 @@ const Header = () => {
   }, []);
 
   const handleListChange = useCallback(
-    (list) => {
+    (list: List) => {
       changeList(list);
       setMenuVisible(false);
     },
@@ -47,7 +48,7 @@ const Header = () => {
             />
           }
         >
-          {lists.map((list) => (
+          {lists.map((list: List) => (
             <Menu.Item
               key={list.uuid}
               title={list.name}

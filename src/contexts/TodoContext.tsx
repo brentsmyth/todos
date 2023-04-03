@@ -1,15 +1,30 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
+import { List, Item } from '../shared/types';
 
-const TodoContext = createContext();
+interface TodoContextData {
+  lists: List[];
+  currentList: List | null;
+  currentItems: Item[];
+  addItem: (name: string) => Promise<void>;
+  completeItem: (item: Item) => Promise<void>;
+  changeList: (list: List) => void;
+  addList: (name: string) => Promise<void>;
+}
+
+const TodoContext = createContext<TodoContextData | null>(null);
 
 const DEFAULT_LIST_NAME = 'Todos';
 
-export const TodoProvider = ({ children }) => {
-  const [lists, setLists] = useState([]);
-  const [currentList, setCurrentList] = useState(null);
-  const [currentItems, setCurrentItems] = useState([]);
+interface TodoProviderProps {
+  children: React.ReactNode;
+}
+
+export const TodoProvider = ({ children }: TodoProviderProps) => {
+  const [lists, setLists] = useState<List[]>([]);
+  const [currentList, setCurrentList] = useState<List | null>(null);
+  const [currentItems, setCurrentItems] = useState<Item[]>([]);
 
   useEffect(() => {
     loadListsAndSelectFirstOrDefault();
@@ -34,7 +49,7 @@ export const TodoProvider = ({ children }) => {
     }
   };
 
-  const setCurrentListAndLoadItems = async (list) => {
+  const setCurrentListAndLoadItems = async (list: List) => {
     try {
       setCurrentList(list);
 
@@ -49,7 +64,7 @@ export const TodoProvider = ({ children }) => {
     }
   };
 
-  const addItem = async (name) => {
+  const addItem = async (name: string) => {
     try {
       const newItem = { uuid: uuid.v4(), name, complete: false };
       const updatedItems = [...currentItems, newItem];
@@ -60,7 +75,7 @@ export const TodoProvider = ({ children }) => {
     }
   };
 
-  const completeItem = async (item) => {
+  const completeItem = async (item: Item) => {
     try {
       const updatedItems = currentItems.map((currentItem) =>
         currentItem.uuid === item.uuid ? { ...currentItem, complete: true } : currentItem
@@ -72,11 +87,11 @@ export const TodoProvider = ({ children }) => {
     }
   };
 
-  const changeList = (list) => {
+  const changeList = (list: List) => {
     setCurrentListAndLoadItems(list);
   };
 
-  const addList = async (name) => {
+  const addList = async (name: string) => {
     try {
       const newList = { name, uuid: uuid.v4() };
       const updatedLists = [...lists, newList];
