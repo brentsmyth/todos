@@ -4,22 +4,22 @@ import { Checkbox } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
 
 const TodoList = () => {
-  const { list, completeItem } = useTodoContext();
+  const { currentItems, completeItem } = useTodoContext();
 
   const sortedList = useMemo(() => {
-    const incompleteItems = list.filter((item) => !item.complete);
-    const completeItems = list.filter((item) => item.complete);
+    const incompleteItems = currentItems.filter((item) => !item.complete);
+    const completeItems = currentItems.filter((item) => item.complete);
     return [...incompleteItems, ...completeItems];
-  }, [list]);
+  }, [currentItems]);
 
   return (
     <ScrollView>
       {sortedList.map((item) => (
         <Checkbox.Item
           key={item.uuid}
-          label={item.description}
+          label={item.name}
           status={item.complete ? 'checked' : 'unchecked'}
-          onPress={() => completeItem(item.uuid)}
+          onPress={() => completeItem(item)}
         />
       ))}
     </ScrollView>

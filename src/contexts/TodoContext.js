@@ -4,108 +4,85 @@ import uuid from 'react-native-uuid';
 
 const TodoContext = createContext();
 
+const DEFAULT_LIST_NAME = 'Todos';
+
 export const TodoProvider = ({ children }) => {
   const [lists, setLists] = useState([]);
-  const [listUuid, setListUuid] = useState('');
-  const [list, setList] = useState([]);
+  const [currentList, setCurrentList] = useState(null);
+  const [currentItems, setCurrentItems] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let lists;
-        const listsData = await AsyncStorage.getItem('lists');
-        if (listsData !== null) {
-          lists = JSON.parse(listsData);
-        } else {
-          const DEFAULT_LIST_NAME = 'Todos';
-          lists = [{
-            name: DEFAULT_LIST_NAME,
-            uuid: uuid.v4(),
-          }];
-        }
-
-        setLists(lists);
-        setListUuid(lists[0].uuid);
-
-        const listData = await AsyncStorage.getItem(lists[0].uuid);
-        if (listData !== null) {
-          setList(JSON.parse(listData));
-        } else {
-          setList([]);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchData();
+    loadListsAndSelectFirstOrDefault();
   }, []);
 
-  const addItem = async (inputValue) => {
-    if (inputValue.trim() === '') return;
-
-    const newItem = {
-      uuid: uuid.v4(),
-      description: inputValue,
-      complete: false,
-    };
-
-    const newList = [...list, newItem];
-    setList(newList);
-
+  const loadListsAndSelectFirstOrDefault = async () => {
     try {
-      await AsyncStorage.setItem(listUuid, JSON.stringify(newList));
+      const listsData = await AsyncStorage.getItem('lists');
+      let parsedLists = listsData ? JSON.parse(listsData) : [];
+
+      if (parsedLists.length === 0) {
+        const defaultList = { name: DEFAULT_LIST_NAME, uuid: uuid.v4() };
+        parsedLists = [defaultList];
+        await AsyncStorage.setItem('lists', JSON.stringify(parsedLists));
+      }
+
+      setLists(parsedLists);
+      setCurrentListAndLoadItems(parsedLists[0]);
+
     } catch (e) {
       console.error(e);
     }
   };
 
-  const completeItem = async (uuid) => {
-    const index = list.findIndex((item) => item.uuid === uuid);
-
-    if (index === -1) return;
-
-    const newList = [...list];
-    newList[index].complete = true;
-    setList(newList);
-
+  const setCurrentListAndLoadItems = async (list) => {
     try {
-      await AsyncStorage.setItem(listUuid, JSON.stringify(newList));
-    } catch (e) {
-      console.error(e);
-    }
-  };
+      setCurrentList(list);
 
-  const changeList = async (uuid) => {
-    setListUuid(uuid);
-
-    try {
-      const data = await AsyncStorage.getItem(uuid);
-      if (data !== null) {
-        setList(JSON.parse(data));
+      const itemsData = await AsyncStorage.getItem(list.uuid);
+      if (itemsData) {
+        setCurrentItems(JSON.parse(itemsData));
       } else {
-        setList([]);
+        setCurrentItems([]);
       }
     } catch (e) {
       console.error(e);
     }
   };
 
-  const addList = async (newListName) => {
-    if (newListName.trim() === '') return;
-
-    const newList = {
-      name: newListName.trim(),
-      uuid: uuid.v4(),
-    };
-    const newLists = [...lists, newList];
-    setLists(newLists);
-
+  const addItem = async (name) => {
     try {
-      await AsyncStorage.setItem('lists', JSON.stringify(newLists));
-      await AsyncStorage.setItem(newList.uuid, '[]');
-      setListUuid(newList.uuid);
-      setList([]);
+      const newItem = { uuid: uuid.v4(), name, complete: false };
+      const updatedItems = [...currentItems, newItem];
+      setCurrentItems(updatedItems);
+      await AsyncStorage.setItem(currentList.uuid, JSON.stringify(updatedItems));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const completeItem = async (item) => {
+    try {
+      const updatedItems = currentItems.map((currentItem) =>
+        currentItem.uuid === item.uuid ? { ...currentItem, complete: true } : currentItem
+      );
+      setCurrentItems(updatedItems);
+      await AsyncStorage.setItem(currentList.uuid, JSON.stringify(updatedItems));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const changeList = (list) => {
+    setCurrentListAndLoadItems(list);
+  };
+
+  const addList = async (name) => {
+    try {
+      const newList = { name, uuid: uuid.v4() };
+      const updatedLists = [...lists, newList];
+      setLists(updatedLists);
+      setCurrentListAndLoadItems(newList);
+      await AsyncStorage.setItem('lists', JSON.stringify(updatedLists));
     } catch (e) {
       console.error(e);
     }
@@ -115,8 +92,8 @@ export const TodoProvider = ({ children }) => {
     <TodoContext.Provider
       value={{
         lists,
-        listUuid,
-        list,
+        currentList,
+        currentItems,
         addItem,
         completeItem,
         changeList,

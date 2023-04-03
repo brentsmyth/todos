@@ -4,11 +4,10 @@ import { Appbar, Menu, Divider, TextInput, Portal, Button } from 'react-native-p
 import { useTodoContext } from '../contexts/TodoContext';
 
 const Header = () => {
-  const { listUuid, lists, changeList, addList } = useTodoContext();
+  const { lists, currentList, changeList, addList } = useTodoContext();
   const [menuVisible, setMenuVisible] = useState(false);
   const [addListViewVisible, setAddListViewVisible] = useState(false);
   const [newListName, setNewListName] = useState('');
-  const currentList = lists.find((list) => list.uuid === listUuid);
 
   const handleMenuOpen = useCallback(() => {
     setMenuVisible(true);
@@ -52,7 +51,7 @@ const Header = () => {
             <Menu.Item
               key={list.uuid}
               title={list.name}
-              onPress={() => handleListChange(list.uuid)}
+              onPress={() => handleListChange(list)}
             />
           ))}
           <Divider />
