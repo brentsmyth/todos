@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
+import { Item } from '../shared/types';
 
 const TodoList = () => {
   const { currentItems, completeItem } = useTodoContext();
@@ -14,7 +15,7 @@ const TodoList = () => {
 
   return (
     <ScrollView>
-      {sortedList.map((item) => (
+      {sortedList.map((item: Item) => (
         <Checkbox.Item
           key={item.uuid}
           label={item.name}
