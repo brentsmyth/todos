@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
 import { Appbar, Menu, Divider, TextInput, Portal, Button } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
@@ -36,7 +36,7 @@ const Header = () => {
 
   return (
     <>
-      <Appbar.Header>
+      <Appbar.Header testID="header">
         <Appbar.Content title={currentList?.name} />
         <Menu
           visible={menuVisible}
@@ -45,6 +45,7 @@ const Header = () => {
             <Appbar.Action
               icon="dots-vertical"
               onPress={handleMenuOpen}
+              testID="menuButton"
             />
           }
         >
@@ -53,6 +54,7 @@ const Header = () => {
               key={list.uuid}
               title={list.name}
               onPress={() => handleListChange(list)}
+              testID={`menuItem-${list.uuid}`}
             />
           ))}
           <Divider />
@@ -71,6 +73,7 @@ const Header = () => {
             value={newListName}
             returnKeyType="done"
             onSubmitEditing={handleCreateList}
+            testID="addListInput"
           />
           <Button onPress={() => setAddListViewVisible(false)}>
             Cancel

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Platform,
   KeyboardAvoidingView,
@@ -27,6 +27,7 @@ const AddItem = () => {
         value={inputValue}
         onChangeText={(text) => setInputValue(text)}
         style={styles.input}
+        testID="addItemInput"
       />
       <Button mode="contained" onPress={handleAddItem}>
         Add
