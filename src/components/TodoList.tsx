@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
@@ -19,8 +19,10 @@ const TodoList = () => {
         <Checkbox.Item
           key={item.uuid}
           label={item.name}
+          accessibilityLabel={`${item.name} - ${item.complete ? 'Complete' : 'Incomplete'}`}
           status={item.complete ? 'checked' : 'unchecked'}
           onPress={() => completeItem(item)}
+          testID="todoItem"
         />
       ))}
     </ScrollView>
