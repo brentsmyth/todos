@@ -1,7 +1,5 @@
 import React from 'react';
-import { render, waitFor, fireEvent } from 'react-native-testing-library';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { render, fireEvent } from '@testing-library/react-native';
 import TodoList from './TodoList';
 import { Item } from '../shared/types';
 
@@ -15,12 +13,17 @@ interface ContextData {
   completeItem: (item: Item) => void;
 }
 
+const setup = (contextData: ContextData) => {
+  mockUseTodoContext.mockReturnValue(contextData);
+  return render(<TodoList />);
+};
+
 describe('TodoList', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders items with the correct status', async () => {
+  it('renders items with the correct status', () => {
     const contextData: ContextData = {
       currentItems: [
         { uuid: 'item-1', name: 'Item 1', complete: false },
@@ -28,45 +31,27 @@ describe('TodoList', () => {
       ],
       completeItem: jest.fn(),
     };
-    mockUseTodoContext.mockReturnValue(contextData);
 
-    const { getByText, getByA11yLabel } = render(
-      <SafeAreaProvider>
-        <PaperProvider>
-          <TodoList />
-        </PaperProvider>
-      </SafeAreaProvider>
-    );
+    const { getByTestId } = setup(contextData);
 
-    await waitFor(() => {
-      const uncheckedItem1 = getByA11yLabel('Item 1 - Incomplete');
-      const checkedItem2 = getByA11yLabel('Item 2 - Complete');
-      expect(uncheckedItem1).toBeTruthy();
-      expect(checkedItem2).toBeTruthy();
-    });
+    const uncheckedItem1 = getByTestId('todoItem-item-1');
+    const checkedItem2 = getByTestId('todoItem-item-2');
+    expect(uncheckedItem1.children[0].props.accessibilityLabel).toBe('Item 1 - Incomplete');
+    expect(checkedItem2.children[0].props.accessibilityLabel).toBe('Item 2 - Complete');
   });
 
-  it('calls completeItem when an item is pressed', async () => {
+  it('calls completeItem when an item is pressed', () => {
     const contextData: ContextData = {
       currentItems: [
         { uuid: 'item-1', name: 'Item 1', complete: false },
       ],
       completeItem: jest.fn(),
     };
-    mockUseTodoContext.mockReturnValue(contextData);
 
-    const { getByText } = render(
-      <SafeAreaProvider>
-        <PaperProvider>
-          <TodoList />
-        </PaperProvider>
-      </SafeAreaProvider>
-    );
+    const { getByText } = setup(contextData);
 
-    await waitFor(() => {
-      const item1 = getByText('Item 1');
-      expect(item1).toBeTruthy();
-    });
+    const item1 = getByText('Item 1');
+    expect(item1).toBeTruthy();
 
     fireEvent.press(getByText('Item 1'));
     expect(contextData.completeItem).toHaveBeenCalledWith({ uuid: 'item-1', name: 'Item 1', complete: false });
@@ -81,22 +66,15 @@ describe('TodoList', () => {
       ],
       completeItem: jest.fn(),
     };
-    mockUseTodoContext.mockReturnValue(contextData);
 
-    const { getAllByTestId } = render(
-      <SafeAreaProvider>
-        <PaperProvider>
-          <TodoList />
-        </PaperProvider>
-      </SafeAreaProvider>
-    );
+    const { getAllByTestId } = setup(contextData);
 
     const expectedOrder = ['Item 1 - Incomplete', 'Item 3 - Incomplete', 'Item 2 - Complete'];
-    const renderedItems = getAllByTestId('todoItem');
+    const renderedItems = getAllByTestId(/todoItem-item-/);
 
-    expect(renderedItems[0].props.accessibilityLabel).toBe(expectedOrder[0]);
-    expect(renderedItems[1].props.accessibilityLabel).toBe(expectedOrder[1]);
-    expect(renderedItems[2].props.accessibilityLabel).toBe(expectedOrder[2]);
+    expect(renderedItems[0].children[0].props.accessibilityLabel).toBe(expectedOrder[0]);
+    expect(renderedItems[1].children[0].props.accessibilityLabel).toBe(expectedOrder[1]);
+    expect(renderedItems[2].children[0].props.accessibilityLabel).toBe(expectedOrder[2]);
   });
 });
 

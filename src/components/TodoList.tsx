@@ -1,6 +1,10 @@
 import React, { useMemo } from 'react';
-import { ScrollView } from 'react-native';
-import { Checkbox } from 'react-native-paper';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ScrollView
+} from 'react-native';
 import { useTodoContext } from '../contexts/TodoContext';
 import { Item } from '../shared/types';
 
@@ -13,21 +17,49 @@ const TodoList = () => {
     return [...incompleteItems, ...completeItems];
   }, [currentItems]);
 
+  const renderItem = (item: Item) => (
+    <TouchableOpacity
+      key={item.uuid}
+      onPress={() => completeItem(item)}
+      style={styles.todoItem}
+      testID={`todoItem-${item.uuid}`}
+    >
+      <Text
+        style={[
+          styles.todoText,
+          item.complete ? styles.todoTextCompleted : {},
+        ]}
+        accessibilityLabel={`${item.name} - ${
+          item.complete ? 'Complete' : 'Incomplete'
+        }`}
+      >
+        {item.complete ? `✓ ${item.name}` : item.name}
+      </Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <ScrollView>
-      {sortedList.map((item: Item) => (
-        <Checkbox.Item
-          key={item.uuid}
-          label={item.name}
-          accessibilityLabel={`${item.name} - ${item.complete ? 'Complete' : 'Incomplete'}`}
-          status={item.complete ? 'checked' : 'unchecked'}
-          onPress={() => completeItem(item)}
-          testID="todoItem"
-        />
-      ))}
+    <ScrollView style={styles.todoList}>
+      {sortedList.map((item) => renderItem(item))}
     </ScrollView>
   );
 };
 
-export default TodoList;
+const styles = StyleSheet.create({
+  todoList: {
+    paddingVertical: 20,
+  },
+  todoItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+  },
+  todoText: {
+    fontSize: 18,
+  },
+  todoTextCompleted: {
+    textDecorationLine: 'line-through',
+    color: 'gray',
+  },
+});
 
+export default TodoList;
