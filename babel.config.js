@@ -7,7 +7,6 @@ module.exports = {
         legacy: true,
       },
     ],
-    'module:react-native-dotenv',
   ],
 };
 
