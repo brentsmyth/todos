@@ -3,8 +3,10 @@ import {
   Platform,
   KeyboardAvoidingView,
   StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Text,
 } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
 import { useTodoContext } from '../contexts/TodoContext';
 
 const AddItem = () => {
@@ -23,15 +25,19 @@ const AddItem = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <TextInput
-        label="Add item"
+        placeholder="Add item"
         value={inputValue}
         onChangeText={(text) => setInputValue(text)}
-        style={styles.input}
+        style={styles.addItemInput}
         testID="addItemInput"
       />
-      <Button mode="contained" onPress={handleAddItem}>
-        Add
-      </Button>
+      <TouchableOpacity
+        onPress={handleAddItem}
+        style={styles.addItemButton}
+        testID="addItemButton"
+      >
+        <Text style={styles.addItemButtonText}>Add</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -43,10 +49,22 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 64,
   },
-  input: {
+  addItemInput: {
     flex: 1,
-    marginRight: 10,
+    marginHorizontal: 10,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 10,
   },
+  addItemButton: {
+    color: '#000',
+    padding: 10,
+    marginRight: 3,
+  },
+  addItemButtonText: {
+    fontSize: 18,
+  }
 });
 
 export default AddItem;
