@@ -11,6 +11,7 @@ interface TodoContextData {
   completeItem: (item: Item) => Promise<void>;
   changeList: (list: List) => void;
   addList: (name: string) => Promise<void>;
+  deleteList: (list: List) => Promise<void>;
 }
 
 const TodoContext = createContext<TodoContextData | null>(null);
@@ -103,6 +104,25 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
     }
   };
 
+  const deleteList = async (listToDelete: List) => {
+    try {
+      await AsyncStorage.removeItem(listToDelete.uuid);
+      const updatedLists = lists.filter((list) => list.uuid !== listToDelete.uuid);
+
+      if (updatedLists.length === 0) {
+        const defaultList = { name: DEFAULT_LIST_NAME, uuid: uuid.v4() };
+        updatedLists.push(defaultList);
+      }
+
+      setLists(updatedLists);
+      await AsyncStorage.setItem('lists', JSON.stringify(updatedLists));
+
+      setCurrentListAndLoadItems(updatedLists[0]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <TodoContext.Provider
       value={{
@@ -113,6 +133,7 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
         completeItem,
         changeList,
         addList,
+        deleteList,
       }}
     >
       {children}

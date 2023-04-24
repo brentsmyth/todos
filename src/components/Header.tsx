@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  Alert,
 } from 'react-native';
 import { useTodoContext } from '../contexts/TodoContext';
 import { List } from '../shared/types';
 
 const Header = () => {
-  const { lists, currentList, changeList, addList } = useTodoContext();
+  const { lists, currentList, changeList, addList, deleteList } = useTodoContext();
   const [menuVisible, setMenuVisible] = useState(false);
   const [addListViewVisible, setAddListViewVisible] = useState(false);
   const [newListName, setNewListName] = useState('');
@@ -41,9 +42,36 @@ const Header = () => {
     setAddListViewVisible(false);
   }, [addList, newListName]);
 
+  const handleDeleteList = useCallback(() => {
+    Alert.alert(
+      'Delete List',
+      'Are you sure you want to delete this list?',
+      [
+        {
+          text: 'Cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            if (currentList) {
+              deleteList(currentList);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }, [currentList, deleteList]);
+
   return (
     <>
       <View style={styles.header} testID="header">
+        <TouchableOpacity
+          onPress={handleDeleteList}
+          testID="deleteListButton"
+        >
+          <Text>Delete</Text>
+        </TouchableOpacity>
         <Text style={styles.title}>{currentList?.name}</Text>
         <TouchableOpacity
           onPress={handleMenuOpen}
