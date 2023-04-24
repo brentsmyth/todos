@@ -1,7 +1,10 @@
 import React from 'react';
+import { Alert } from "react-native";
 import { render, fireEvent } from '@testing-library/react-native';
 import Header from './Header';
 import { List } from '../shared/types';
+
+jest.spyOn(Alert, 'alert');
 
 const mockUseTodoContext = jest.fn();
 jest.mock('../contexts/TodoContext', () => ({
@@ -13,6 +16,7 @@ interface ContextData {
   currentList: List;
   changeList?: (list: List) => void;
   addList?: (name: string) => void;
+  deleteList?: (list: List) => void;
 }
 
 const setup = (contextData: ContextData) => {
@@ -157,6 +161,37 @@ describe('Header', () => {
     fireEvent(addListInput, 'onSubmitEditing');
 
     expect(queryByTestId('addListInput')).toBeFalsy();
+  });
+
+  it('shows delete confirmation dialog when the "Delete" button is pressed', () => {
+    const contextData: ContextData = {
+      lists: [],
+      currentList: { name: 'Test List', uuid: 'test-uuid' },
+    };
+    const { getByTestId } = setup(contextData);
+
+    const deleteListButton = getByTestId('deleteListButton');
+    fireEvent.press(deleteListButton);
+
+    expect(Alert.alert).toHaveBeenCalled();
+  });
+
+  it('calls deleteList with the correct list entity when "OK" is pressed on the delete confirmation dialog', () => {
+    const contextData: ContextData = {
+      lists: [],
+      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      deleteList: jest.fn(),
+    };
+    const { getByTestId } = setup(contextData);
+
+    const deleteListButton = getByTestId('deleteListButton');
+    fireEvent.press(deleteListButton);
+
+    // @ts-ignore
+    const okButton = Alert.alert.mock.calls[0][2][1];
+    okButton.onPress();
+
+    expect(contextData.deleteList).toHaveBeenCalledWith({ name: 'Test List', uuid: 'test-uuid' });
   });
 });
 
