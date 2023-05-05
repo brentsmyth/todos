@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import TodoList from './TodoList';
-import { Item } from '../shared/types';
+import List from './List';
+import { Item } from '../../shared/types';
 
 const mockUseTodoContext = jest.fn();
-jest.mock('../contexts/TodoContext', () => ({
+jest.mock('../../contexts/TodoContext', () => ({
   useTodoContext: () => mockUseTodoContext(),
 }));
 
@@ -15,10 +15,10 @@ interface ContextData {
 
 const setup = (contextData: ContextData) => {
   mockUseTodoContext.mockReturnValue(contextData);
-  return render(<TodoList />);
+  return render(<List />);
 };
 
-describe('TodoList', () => {
+describe('List', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

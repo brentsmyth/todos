@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import { useTodoContext } from '../contexts/TodoContext';
+import { useTodoContext } from '../../contexts/TodoContext';
 
 const AddItem = () => {
   const { addItem } = useTodoContext();
