@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import AddItem from '../components/AddItem';
+import AddItem from './AddItem';
 
 const mockUseTodoContext = jest.fn();
-jest.mock('../contexts/TodoContext', () => ({
+jest.mock('../../contexts/TodoContext', () => ({
   useTodoContext: () => mockUseTodoContext(),
 }));
 

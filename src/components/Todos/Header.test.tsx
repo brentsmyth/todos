@@ -2,12 +2,12 @@ import React from 'react';
 import { Alert } from "react-native";
 import { render, fireEvent } from '@testing-library/react-native';
 import Header from './Header';
-import { List } from '../shared/types';
+import { List } from '../../shared/types';
 
 jest.spyOn(Alert, 'alert');
 
 const mockUseTodoContext = jest.fn();
-jest.mock('../contexts/TodoContext', () => ({
+jest.mock('../../contexts/TodoContext', () => ({
   useTodoContext: () => mockUseTodoContext(),
 }));
 

@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView
 } from 'react-native';
-import { useTodoContext } from '../contexts/TodoContext';
-import { Item } from '../shared/types';
+import { useTodoContext } from '../../contexts/TodoContext';
+import { Item } from '../../shared/types';
 
-const TodoList = () => {
+const List = () => {
   const { currentItems, completeItem } = useTodoContext();
 
   const sortedList = useMemo(() => {
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TodoList;
+export default List;

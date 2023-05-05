@@ -9,8 +9,8 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { useTodoContext } from '../contexts/TodoContext';
-import { List } from '../shared/types';
+import { useTodoContext } from '../../contexts/TodoContext';
+import { List } from '../../shared/types';
 
 const Header = () => {
   const { lists, currentList, changeList, addList, deleteList } = useTodoContext();
@@ -78,7 +78,7 @@ const Header = () => {
           style={styles.menuButton}
           testID="menuButton"
         >
-          <Image style={{width: 35, height: 35}} source={require('../assets/list-solid.png')} />
+          <Image style={{width: 35, height: 35}} source={require('../../assets/list-solid.png')} />
         </TouchableOpacity>
       </View>
 
