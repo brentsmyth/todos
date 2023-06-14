@@ -19,10 +19,10 @@ const List = () => {
 
   const renderItem = (item: Item) => (
     <TouchableOpacity
-      key={item.uuid}
+      key={item.id}
       onPress={() => completeItem(item)}
       style={styles.todoItem}
-      testID={`todoItem-${item.uuid}`}
+      testID={`todoItem-${item.id}`}
     >
       <Text
         style={[
@@ -39,7 +39,7 @@ const List = () => {
   );
 
   return (
-    <ScrollView style={styles.todoList}>
+    <ScrollView testID="list" style={styles.todoList}>
       {sortedList.map((item) => renderItem(item))}
     </ScrollView>
   );

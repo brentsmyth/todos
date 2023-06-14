@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import uuid from 'react-native-uuid';
+import { useAuth } from './AuthContext';
 import { List, Item } from '../shared/types';
 
 interface TodoContextData {
@@ -12,114 +11,110 @@ interface TodoContextData {
   changeList: (list: List) => void;
   addList: (name: string) => Promise<void>;
   deleteList: (list: List) => Promise<void>;
+  loading: boolean;
 }
 
 const TodoContext = createContext<TodoContextData | null>(null);
-
-const DEFAULT_LIST_NAME = 'Todos';
 
 interface TodoProviderProps {
   children: React.ReactNode;
 }
 
 export const TodoProvider = ({ children }: TodoProviderProps) => {
+  const { authToken } = useAuth();
   const [lists, setLists] = useState<List[]>([]);
   const [currentList, setCurrentList] = useState<List | null>(null);
   const [currentItems, setCurrentItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const API_URL = "https://todos-service.herokuapp.com/api/v1";
 
   useEffect(() => {
-    loadListsAndSelectFirstOrDefault();
+    loadListsAndSelectFirst();
   }, []);
 
-  const loadListsAndSelectFirstOrDefault = async () => {
-    try {
-      const listsData = await AsyncStorage.getItem('lists');
-      let parsedLists = listsData ? JSON.parse(listsData) : [];
-
-      if (parsedLists.length === 0) {
-        const defaultList = { name: DEFAULT_LIST_NAME, uuid: uuid.v4() };
-        parsedLists = [defaultList];
-        await AsyncStorage.setItem('lists', JSON.stringify(parsedLists));
+  const loadListsAndSelectFirst = async () => {
+    setLoading(true);
+    const response = await fetch(`${API_URL}/lists`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`
       }
-
-      setLists(parsedLists);
-      setCurrentListAndLoadItems(parsedLists[0]);
-
-    } catch (e) {
-      console.error(e);
+    });
+    const data = await response.json();
+    if (data[0]) {
+      setLists(data);
+      setCurrentListAndLoadItems(data[0]);
     }
+    setLoading(false);
   };
 
   const setCurrentListAndLoadItems = async (list: List) => {
-    try {
-      setCurrentList(list);
-
-      const itemsData = await AsyncStorage.getItem(list.uuid);
-      if (itemsData) {
-        setCurrentItems(JSON.parse(itemsData));
-      } else {
-        setCurrentItems([]);
+    setCurrentList(list);
+    const response = await fetch(`${API_URL}/lists/${list.id}/items`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`
       }
-    } catch (e) {
-      console.error(e);
-    }
+    });
+    const data = await response.json();
+    setCurrentItems(data);
   };
 
   const addItem = async (name: string) => {
-    try {
-      const newItem = { uuid: uuid.v4(), name, complete: false };
-      const updatedItems = [...currentItems, newItem];
-      setCurrentItems(updatedItems);
-      await AsyncStorage.setItem(currentList.uuid, JSON.stringify(updatedItems));
-    } catch (e) {
-      console.error(e);
-    }
+    const response = await fetch(`${API_URL}/lists/${currentList.id}/items`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, complete: false })
+    });
+    const data = await response.json();
+    setCurrentItems([...currentItems, data]);
   };
 
   const completeItem = async (item: Item) => {
-    try {
-      const updatedItems = currentItems.map((currentItem) =>
-        currentItem.uuid === item.uuid ? { ...currentItem, complete: true } : currentItem
-      );
-      setCurrentItems(updatedItems);
-      await AsyncStorage.setItem(currentList.uuid, JSON.stringify(updatedItems));
-    } catch (e) {
-      console.error(e);
-    }
+    const response = await fetch(`${API_URL}/items/${item.id}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ...item, complete: true })
+    });
+    const data = await response.json();
+    setCurrentItems(currentItems.map((currentItem) => 
+      currentItem.id === data.id ? data : currentItem
+    ));
   };
 
-  const changeList = (list: List) => {
+  const changeList = async (list: List) => {
     setCurrentListAndLoadItems(list);
   };
 
   const addList = async (name: string) => {
-    try {
-      const newList = { name, uuid: uuid.v4() };
-      const updatedLists = [...lists, newList];
-      setLists(updatedLists);
-      setCurrentListAndLoadItems(newList);
-      await AsyncStorage.setItem('lists', JSON.stringify(updatedLists));
-    } catch (e) {
-      console.error(e);
-    }
+    const response = await fetch(`${API_URL}/lists`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name })
+    });
+    const data = await response.json();
+    setLists([...lists, data]);
+    setCurrentListAndLoadItems(data);
   };
 
   const deleteList = async (listToDelete: List) => {
-    try {
-      await AsyncStorage.removeItem(listToDelete.uuid);
-      const updatedLists = lists.filter((list) => list.uuid !== listToDelete.uuid);
-
-      if (updatedLists.length === 0) {
-        const defaultList = { name: DEFAULT_LIST_NAME, uuid: uuid.v4() };
-        updatedLists.push(defaultList);
+    await fetch(`${API_URL}/lists/${listToDelete.id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
       }
-
-      setLists(updatedLists);
-      await AsyncStorage.setItem('lists', JSON.stringify(updatedLists));
-
+    });
+    const updatedLists = lists.filter((list) => list.id !== listToDelete.id);
+    setLists(updatedLists);
+    if (updatedLists[0]) {
       setCurrentListAndLoadItems(updatedLists[0]);
-    } catch (e) {
-      console.error(e);
     }
   };
 
@@ -134,6 +129,7 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
         changeList,
         addList,
         deleteList,
+        loading,
       }}
     >
       {children}

@@ -16,7 +16,8 @@
     "expo-updates": "~0.18.9",
     "react": "18.2.0",
     "react-native": "0.72.1",
-    "react-native-uuid": "^2.0.1"
+    "react-native-uuid": "^2.0.1",
+    "react-native-webview": "11.26.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",

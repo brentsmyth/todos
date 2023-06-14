@@ -23,6 +23,7 @@ const AddItem = () => {
       style={styles.footer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      testID="addItem"
     >
       <TextInput
         placeholder="Add item"
