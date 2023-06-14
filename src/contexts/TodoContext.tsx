@@ -20,9 +20,10 @@ const DEFAULT_LIST_NAME = 'Todos';
 
 interface TodoProviderProps {
   children: React.ReactNode;
+  authToken: string;
 }
 
-export const TodoProvider = ({ children }: TodoProviderProps) => {
+export const TodoProvider = ({ children, authToken }: TodoProviderProps) => {
   const [lists, setLists] = useState<List[]>([]);
   const [currentList, setCurrentList] = useState<List | null>(null);
   const [currentItems, setCurrentItems] = useState<Item[]>([]);
