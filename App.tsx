@@ -1,25 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StatusBar, View, StyleSheet } from 'react-native';
 import { TodoProvider } from './src/contexts/TodoContext';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import Todos from './src/components/Todos/Todos'
 import SignIn from './src/components/SignIn';
 
 export default function App() {
-  const [authToken, setAuthToken] = useState('');
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
 
-  const handleAuthToken = (token: string) => {
-    setAuthToken(token);
-  };
+const AppContent = () => {
+  const { authToken } = useAuth();
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       {authToken ? (
-        <TodoProvider authToken={authToken}>
+        <TodoProvider>
           <Todos />
         </TodoProvider>
       ) : (
-        <SignIn onAuthToken={handleAuthToken} />
+        <SignIn />
       )}
     </View>
   );

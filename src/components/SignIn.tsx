@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { Platform, SafeAreaView, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { useAuth } from '../contexts/AuthContext';
 
 /*
 The implemented approach here isn't best practice and carries security 
@@ -19,13 +20,11 @@ the app's context via deep links. There'll be learning and configuration
 needed to secure deep links initially.
 */
 
-interface SignInProps {
-  onAuthToken: (token: string) => void;
-}
-
 const BASE_URL = 'https://todos-service.herokuapp.com';
 
-const SignIn = ({ onAuthToken }: SignInProps) => {
+const SignIn = () => {
+  const { handleAuthToken } = useAuth();
+
   const webViewRef = useRef<WebView>(null);
 
   const handleNavigationStateChange = (navState: { url: string, loading: boolean }) => {
@@ -41,7 +40,7 @@ const SignIn = ({ onAuthToken }: SignInProps) => {
   };
 
   const handleMessage = (event: { nativeEvent: { data: string; }; }) => {
-    onAuthToken(event.nativeEvent.data);
+    handleAuthToken(event.nativeEvent.data);
   };
 
   return (

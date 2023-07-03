@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { List, Item } from '../shared/types';
 
 interface TodoContextData {
@@ -16,10 +17,10 @@ const TodoContext = createContext<TodoContextData | null>(null);
 
 interface TodoProviderProps {
   children: React.ReactNode;
-  authToken: string;
 }
 
-export const TodoProvider = ({ children, authToken }: TodoProviderProps) => {
+export const TodoProvider = ({ children }: TodoProviderProps) => {
+  const { authToken } = useAuth();
   const [lists, setLists] = useState<List[]>([]);
   const [currentList, setCurrentList] = useState<List | null>(null);
   const [currentItems, setCurrentItems] = useState<Item[]>([]);
