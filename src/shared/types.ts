@@ -1,10 +1,10 @@
 export type List = {
+  id: number;
   name: string;
-  uuid: string;
 };
 
 export type Item = {
-  uuid: string;
+  id: number;
   name: string;
   complete: boolean;
 };

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Platform, SafeAreaView } from 'react-native';
+import { Platform, SafeAreaView, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 /*
@@ -45,7 +45,7 @@ const SignIn = ({ onAuthToken }: SignInProps) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
       <WebView
         ref={webViewRef}
         source={{ uri: `${BASE_URL}/auth/google_oauth2_redirect` }}
@@ -56,5 +56,11 @@ const SignIn = ({ onAuthToken }: SignInProps) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default SignIn;
