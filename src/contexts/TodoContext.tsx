@@ -11,6 +11,7 @@ interface TodoContextData {
   changeList: (list: List) => void;
   addList: (name: string) => Promise<void>;
   deleteList: (list: List) => Promise<void>;
+  loading: boolean;
 }
 
 const TodoContext = createContext<TodoContextData | null>(null);
@@ -24,6 +25,7 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
   const [lists, setLists] = useState<List[]>([]);
   const [currentList, setCurrentList] = useState<List | null>(null);
   const [currentItems, setCurrentItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
   const API_URL = "https://todos-service.herokuapp.com/api/v1";
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
   }, []);
 
   const loadListsAndSelectFirst = async () => {
+    setLoading(true);
     const response = await fetch(`${API_URL}/lists`, {
       headers: {
         Authorization: `Bearer ${authToken}`
@@ -41,6 +44,7 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
       setLists(data);
       setCurrentListAndLoadItems(data[0]);
     }
+    setLoading(false);
   };
 
   const setCurrentListAndLoadItems = async (list: List) => {
@@ -125,6 +129,7 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
         changeList,
         addList,
         deleteList,
+        loading,
       }}
     >
       {children}
