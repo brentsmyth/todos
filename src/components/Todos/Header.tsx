@@ -86,10 +86,10 @@ const Header = () => {
         <View style={styles.menu}>
           {lists.map((item) => (
             <TouchableOpacity
-              key={item.uuid}
+              key={item.id}
               style={styles.menuItem}
               onPress={() => handleListChange(item)}
-              testID={`menuItem-${item.uuid}`}
+              testID={`menuItem-${item.id}`}
             >
               <Text style={styles.menuItemText}>{item.name}</Text>
             </TouchableOpacity>

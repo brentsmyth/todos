@@ -19,10 +19,10 @@ const List = () => {
 
   const renderItem = (item: Item) => (
     <TouchableOpacity
-      key={item.uuid}
+      key={item.id}
       onPress={() => completeItem(item)}
       style={styles.todoItem}
-      testID={`todoItem-${item.uuid}`}
+      testID={`todoItem-${item.id}`}
     >
       <Text
         style={[

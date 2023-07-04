@@ -32,7 +32,7 @@ describe('Header', () => {
   it('renders the header', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
     };
     const { getByTestId } = setup(contextData);
 
@@ -43,7 +43,7 @@ describe('Header', () => {
   it('renders the header with the current list name', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
     };
     const { getByText } = setup(contextData);
 
@@ -54,7 +54,7 @@ describe('Header', () => {
   it('opens the menu when the menu button is pressed', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
     };
     const { getByTestId } = setup(contextData);
 
@@ -68,18 +68,18 @@ describe('Header', () => {
   it('renders the list of available lists when the menu is opened', () => {
     const contextData: ContextData = {
       lists: [
-        { name: 'Test List 1', uuid: 'test-uuid-1' },
-        { name: 'Test List 2', uuid: 'test-uuid-2' },
+        { name: 'Test List 1', id: 1 },
+        { name: 'Test List 2', id: 2 },
       ],
-      currentList: { name: 'Test List 1', uuid: 'test-uuid-1' },
+      currentList: { name: 'Test List 1', id: 1 },
     };
     const { getByTestId } = setup(contextData);
 
     const menuButton = getByTestId('menuButton');
     fireEvent.press(menuButton);
 
-    const menuItem1 = getByTestId('menuItem-test-uuid-1');
-    const menuItem2 = getByTestId('menuItem-test-uuid-2');
+    const menuItem1 = getByTestId('menuItem-1');
+    const menuItem2 = getByTestId('menuItem-2');
     expect(menuItem1).toBeTruthy();
     expect(menuItem2).toBeTruthy();
   });
@@ -87,10 +87,10 @@ describe('Header', () => {
   it('calls changeList with correct list entity when a different list is selected', () => {
     const contextData: ContextData = {
       lists: [
-        { name: 'Test List 1', uuid: 'test-uuid-1' },
-        { name: 'Test List 2', uuid: 'test-uuid-2' },
+        { name: 'Test List 1', id: 1 },
+        { name: 'Test List 2', id: 2 },
       ],
-      currentList: { name: 'Test List 1', uuid: 'test-uuid-1' },
+      currentList: { name: 'Test List 1', id: 1 },
       changeList: jest.fn(),
     };
     const { getByTestId } = setup(contextData);
@@ -98,16 +98,16 @@ describe('Header', () => {
     const menuButton = getByTestId('menuButton');
     fireEvent.press(menuButton);
 
-    const menuItem = getByTestId('menuItem-test-uuid-2');
+    const menuItem = getByTestId('menuItem-2');
     fireEvent.press(menuItem);
 
-    expect(contextData.changeList).toHaveBeenCalledWith({ name: 'Test List 2', uuid: 'test-uuid-2' });
+    expect(contextData.changeList).toHaveBeenCalledWith({ name: 'Test List 2', id: 2 });
   });
 
   it('shows the "Add list" view when the "Add list" menu item is pressed', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
     };
     const { getByTestId } = setup(contextData);
 
@@ -124,7 +124,7 @@ describe('Header', () => {
   it('calls addList with a name when "Add list" is actioned and submitted', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
       addList: jest.fn(),
     };
     const { getByTestId } = setup(contextData);
@@ -145,7 +145,7 @@ describe('Header', () => {
   it('hides the "Add list" view when a new list is submitted', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
       addList: jest.fn(),
     };
     const { getByTestId, queryByTestId } = setup(contextData);
@@ -166,7 +166,7 @@ describe('Header', () => {
   it('shows delete confirmation dialog when the "Delete" button is pressed', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
     };
     const { getByTestId } = setup(contextData);
 
@@ -179,7 +179,7 @@ describe('Header', () => {
   it('calls deleteList with the correct list entity when "OK" is pressed on the delete confirmation dialog', () => {
     const contextData: ContextData = {
       lists: [],
-      currentList: { name: 'Test List', uuid: 'test-uuid' },
+      currentList: { name: 'Test List', id: 1 },
       deleteList: jest.fn(),
     };
     const { getByTestId } = setup(contextData);
@@ -191,7 +191,7 @@ describe('Header', () => {
     const okButton = Alert.alert.mock.calls[0][2][1];
     okButton.onPress();
 
-    expect(contextData.deleteList).toHaveBeenCalledWith({ name: 'Test List', uuid: 'test-uuid' });
+    expect(contextData.deleteList).toHaveBeenCalledWith({ name: 'Test List', id: 1 });
   });
 });
 
