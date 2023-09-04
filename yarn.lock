@@ -6312,10 +6312,10 @@ react-native-uuid@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
   integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
 
-react-native-webview@13.3.0:
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.3.0.tgz#37e23179e40fb21ceaa7bdc53868f160f6de60d7"
-  integrity sha512-9ZtEqY2zkhrWwposHsno0eod0CXT/9xxCS+lzmmeiSZA1v8n13OSTWgZC5UGlmW7GCiUc+9sI6DkVRky0AbiyA==
+react-native-webview@13.5.1:
+  version "13.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.5.1.tgz#1b8e41cea1bdb075c3cc2fde16b0a2208527d124"
+  integrity sha512-SZQJqFUMxYYj1xYWy1Z48WcHpqOGvbXKS5R1cnaLQY/JxefS+1NOVMqWxy1Zwmc128vqtRklES8l9Jus8tKSLg==
   dependencies:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
